@@ -43,8 +43,8 @@
         "adminTab": {
             "singleton": true,
             "name": {
-                "en": "ioBroker Blue Connect Adapter",
-                "de": "ioBroker Blue Connect Adapter"
+	            "en": "ioBroker Blue Connect Adapter",
+        	    "de": "ioBroker Blue Connect Adapter"
             },
             "link": "",
             "fa-icon": "aws"
@@ -59,8 +59,8 @@
     "native": {
         "email": "",
         "password": "",
-        "poolID": "",
-        "blueConnectKey": ""
+	"poolID": "",
+	"blueConnectKey": ""
     },
     "objects": [],
     "instanceObjects": []

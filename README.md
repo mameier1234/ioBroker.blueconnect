@@ -3,8 +3,6 @@
 
 [![NPM version](http://img.shields.io/npm/v/iobroker.template.svg)](https://www.npmjs.com/package/iobroker.template)
 [![Downloads](https://img.shields.io/npm/dm/iobroker.template.svg)](https://www.npmjs.com/package/iobroker.template)
-![Number of Installations (latest)](http://iobroker.live/badges/template-installed.svg)
-![Number of Installations (stable)](http://iobroker.live/badges/template-stable.svg)
 [![Dependency Status](https://img.shields.io/david/Author/iobroker.template.svg)](https://david-dm.org/Author/iobroker.template)
 [![Known Vulnerabilities](https://snyk.io/test/github/Author/ioBroker.template/badge.svg)](https://snyk.io/test/github/Author/ioBroker.template)
 
@@ -40,10 +38,6 @@ You are almost done, only a few steps left:
     ```
 1. Head over to [main.js](main.js) and start programming!
 
-### Best Practices
-We've collected some [best practices](https://github.com/ioBroker/ioBroker.repositories#development-and-coding-best-practices) regarding ioBroker development and coding in general. If you're new to ioBroker or Node.js, you should
-check them out. If you're already experienced, you should also take a look at them - you might learn something new :)
-
 ### Scripts in `package.json`
 Several npm scripts are predefined for your convenience. You can run them using `npm run <scriptname>`
 | Script name | Description                                              |
@@ -51,7 +45,7 @@ Several npm scripts are predefined for your convenience. You can run them using 
 | `test:js`   | Executes the tests you defined in `*.test.js` files.     |
 | `test:package`    | Ensures your `package.json` and `io-package.json` are valid. |
 | `test` | Performs a minimal test run on package files and your tests. |
-| `lint` | Runs `ESLint` to check your code for formatting errors and potential bugs. |
+| `coverage` | Generates code coverage using your test files. |
 
 ### Writing tests
 When done right, testing code is invaluable, because it gives you the 
@@ -65,8 +59,7 @@ The template provides you with basic tests for the adapter startup and package f
 It is recommended that you add your own tests into the mix.
 
 ### Publishing the adapter
-To get your adapter released in ioBroker, please refer to the documentation 
-of [ioBroker.repositories](https://github.com/ioBroker/ioBroker.repositories#requirements-for-adapter-to-get-added-to-the-latest-repository).
+See the documentation of [ioBroker.repositories](https://github.com/ioBroker/ioBroker.repositories#requirements-for-adapter-to-get-added-to-the-latest-repository).
 
 ### Test the adapter manually on a local ioBroker installation
 In order to install the adapter locally without publishing, the following steps are recommended:
@@ -93,7 +86,7 @@ For later updates, the above procedure is not necessary. Just do the following:
 ## License
 MIT License
 
-Copyright (c) 2020 Author <author@mail.com>
+Copyright (c) 2019 Author <author@mail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
