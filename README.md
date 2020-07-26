@@ -1,45 +1,114 @@
-# <img src="icon.png" width=48> ioBroker templates
+![Logo](admin/template.png)
+# ioBroker.template
 
-This is a collection of templates for ioBroker developers to create adapters or VIS widgets. Just select the template you need, copy its contents from the sub directory and begin working on your project.
+[![NPM version](http://img.shields.io/npm/v/iobroker.template.svg)](https://www.npmjs.com/package/iobroker.template)
+[![Downloads](https://img.shields.io/npm/dm/iobroker.template.svg)](https://www.npmjs.com/package/iobroker.template)
+![Number of Installations (latest)](http://iobroker.live/badges/template-installed.svg)
+![Number of Installations (stable)](http://iobroker.live/badges/template-stable.svg)
+[![Dependency Status](https://img.shields.io/david/Author/iobroker.template.svg)](https://david-dm.org/Author/iobroker.template)
+[![Known Vulnerabilities](https://snyk.io/test/github/Author/ioBroker.template/badge.svg)](https://snyk.io/test/github/Author/ioBroker.template)
 
-Alternatively you can use [`@iobroker/create-adapter`](https://github.com/ioBroker/create-adapter) to generate a custom skeleton based on your exact needs. We recommend that way if you start developing an adapter or widget.
+[![NPM](https://nodei.co/npm/iobroker.template.png?downloads=true)](https://nodei.co/npm/iobroker.template/)
 
-<!-- TODO: Links to documentation and stuff -->
+**Tests:**: [![Travis-CI](http://img.shields.io/travis/Author/ioBroker.template/master.svg)](https://travis-ci.org/Author/ioBroker.template)
 
-## Templates
-Currently, the following templates are available:
+## template adapter for ioBroker
 
-### Adapter and visualization
+Template for adapter development
 
-#### [JavaScript](JavaScriptVIS)
+## Developer manual
+This section is intended for the developer. It can be deleted later
 
-#### [TypeScript](TypeScriptVIS)
+### Getting started
 
-### Adapter only
+You are almost done, only a few steps left:
+1. Create a new repository on GitHub with the name `ioBroker.template`
+1. Initialize the current folder as a new git repository:  
+    ```bash
+    git init
+    git add .
+    git commit -m "Initial commit"
+    ```
+1. Link your local repository with the one on GitHub:  
+    ```bash
+    git remote add origin https://github.com/Author/ioBroker.template
+    ```
 
-#### [JavaScript](JavaScript)
+1. Push all files to the GitHub repo:  
+    ```bash
+    git push origin master
+    ```
+1. Head over to [main.js](main.js) and start programming!
 
-#### [TypeScript](TypeScript)
+### Best Practices
+We've collected some [best practices](https://github.com/ioBroker/ioBroker.repositories#development-and-coding-best-practices) regarding ioBroker development and coding in general. If you're new to ioBroker or Node.js, you should
+check them out. If you're already experienced, you should also take a look at them - you might learn something new :)
 
-## [Visualization only](VIS)
+### Scripts in `package.json`
+Several npm scripts are predefined for your convenience. You can run them using `npm run <scriptname>`
+| Script name | Description                                              |
+|-------------|----------------------------------------------------------|
+| `test:js`   | Executes the tests you defined in `*.test.js` files.     |
+| `test:package`    | Ensures your `package.json` and `io-package.json` are valid. |
+| `test` | Performs a minimal test run on package files and your tests. |
+| `lint` | Runs `ESLint` to check your code for formatting errors and potential bugs. |
 
+### Writing tests
+When done right, testing code is invaluable, because it gives you the 
+confidence to change your code while knowing exactly if and when 
+something breaks. A good read on the topic of test-driven development 
+is https://hackernoon.com/introduction-to-test-driven-development-tdd-61a13bc92d92. 
+Although writing tests before the code might seem strange at first, but it has very 
+clear upsides.
 
-## Features
-All templates come with the following features:
-* IntelliSense (auto completion and tooltips) in supporting editors
-* JavaScript only:
-  * [ESLint](https://github.com/eslint/eslint) for code quality
-  * Type checking based on the ioBroker declarations
-* TypeScript only:
-  * [ESLint](https://github.com/eslint/eslint) for code quality
-  * [nyc](https://github.com/istanbuljs/nyc) for code coverage
-* Built-in component tests using `mocha` & `chai` (with `chai-as-promised`) and `sinon` (with `sinon-chai`) for:
-  * Correctly defined package files
-  * and your own tests
-* ... [and more to come](https://github.com/ioBroker/create-adapter/blob/master/README.md#roadmap)
+The template provides you with basic tests for the adapter startup and package files.
+It is recommended that you add your own tests into the mix.
 
-## Anything missing?
-The templates are automatically generated using [`@iobroker/create-adapter`](https://github.com/ioBroker/create-adapter). If you're missing a feature or found a bug, please open an issue in that repository. Or consider using the tool directly for much more configuration goodness.
+### Publishing the adapter
+To get your adapter released in ioBroker, please refer to the documentation 
+of [ioBroker.repositories](https://github.com/ioBroker/ioBroker.repositories#requirements-for-adapter-to-get-added-to-the-latest-repository).
 
-## For developers
-Please don't edit these files directly (except this README). Instead the CI builds in the `create-adapter` repo should be updated.
+### Test the adapter manually on a local ioBroker installation
+In order to install the adapter locally without publishing, the following steps are recommended:
+1. Create a tarball from your dev directory:  
+    ```bash
+    npm pack
+    ```
+1. Upload the resulting file to your ioBroker host
+1. Install it locally (The paths are different on Windows):
+    ```bash
+    cd /opt/iobroker
+    npm i /path/to/tarball.tgz
+    ```
+
+For later updates, the above procedure is not necessary. Just do the following:
+1. Overwrite the changed files in the adapter directory (`/opt/iobroker/node_modules/iobroker.template`)
+1. Execute `iobroker upload template` on the ioBroker host
+
+## Changelog
+
+### 0.0.1
+* (Author) initial release
+
+## License
+MIT License
+
+Copyright (c) 2020 Author <author@mail.com>
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.

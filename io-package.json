@@ -1,6 +1,6 @@
 {
     "common": {
-        "name": "template",
+        "name": "blueconnect",
         "version": "0.0.1",
         "news": {
             "0.0.1": {
@@ -16,18 +16,18 @@
                 "zh-cn": "首次出版"
             }
         },
-        "title": "Template (JavaScript with VIS)",
+        "title": "Template (JavaScript)",
         "titleLang": {
-            "en": "Template (JavaScript with VIS)",
-            "de": "Vorlage (JavaScript mit VIS)",
-            "ru": "Шаблон (JavaScript с VIS)",
-            "pt": "Modelo (JavaScript com VIS)",
-            "nl": "Sjabloon (JavaScript met VIS)",
-            "fr": "Modèle (JavaScript avec VIS)",
-            "it": "Modello (JavaScript con VIS)",
-            "es": "Plantilla (JavaScript con VIS)",
-            "pl": "Szablon (JavaScript z VIS)",
-            "zh-cn": "模板（JavaScript和VIS）"
+            "en": "Template (JavaScript)",
+            "de": "Vorlage (JavaScript)",
+            "ru": "Шаблон (JavaScript)",
+            "pt": "Modelo (JavaScript)",
+            "nl": "Sjabloon (JavaScript)",
+            "fr": "Modèle (JavaScript)",
+            "it": "Modello (JavaScript)",
+            "es": "Plantilla (JavaScript)",
+            "pl": "Szablon (JavaScript)",
+            "zh-cn": "范本（JavaScript）"
         },
         "desc": {
             "en": "Template for adapter development",
@@ -58,10 +58,6 @@
         "extIcon": "https://raw.githubusercontent.com/Author/ioBroker.template/master/admin/template.png",
         "readme": "https://github.com/Author/ioBroker.template/blob/master/README.md",
         "loglevel": "info",
-        "restartAdapters": [
-            "vis"
-        ],
-        "localLink": "%web_protocol%://%ip%:%web_port%/vis/edit.html",
         "mode": "daemon",
         "type": "general",
         "compact": true,
@@ -70,16 +66,16 @@
         "adminTab": {
             "singleton": true,
             "name": {
-                "en": "Template (JavaScript with VIS)",
-                "de": "Vorlage (JavaScript mit VIS)",
-                "ru": "Шаблон (JavaScript с VIS)",
-                "pt": "Modelo (JavaScript com VIS)",
-                "nl": "Sjabloon (JavaScript met VIS)",
-                "fr": "Modèle (JavaScript avec VIS)",
-                "it": "Modello (JavaScript con VIS)",
-                "es": "Plantilla (JavaScript con VIS)",
-                "pl": "Szablon (JavaScript z VIS)",
-                "zh-cn": "模板（JavaScript和VIS）"
+                "en": "Template (JavaScript)",
+                "de": "Vorlage (JavaScript)",
+                "ru": "Шаблон (JavaScript)",
+                "pt": "Modelo (JavaScript)",
+                "nl": "Sjabloon (JavaScript)",
+                "fr": "Modèle (JavaScript)",
+                "it": "Modello (JavaScript)",
+                "es": "Plantilla (JavaScript)",
+                "pl": "Szablon (JavaScript)",
+                "zh-cn": "范本（JavaScript）"
             },
             "link": "",
             "fa-icon": "info"
@@ -88,8 +84,7 @@
         "dependencies": [
             {
                 "js-controller": ">=1.4.2"
-            },
-            "vis"
+            }
         ]
     },
     "native": {
