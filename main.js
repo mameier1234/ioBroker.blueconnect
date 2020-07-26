@@ -1,168 +1,189 @@
 'use strict';
 
-/*
- * Created with @iobroker/create-adapter v1.26.0
- */
-
-// The adapter-core module gives you access to the core ioBroker functions
-// you need to create an adapter
 const utils = require('@iobroker/adapter-core');
+const request = require("request");
+const crypto = require('crypto-js');
 
-// Load your modules here, e.g.:
-// const fs = require("fs");
 
-class Template extends utils.Adapter {
-
-    /**
-     * @param {Partial<utils.AdapterOptions>} [options={}]
-     */
+class Blueconnect extends utils.Adapter {
+    
     constructor(options) {
         super({
             ...options,
-            name: 'template',
+            name: 'blueconnect',
         });
         this.on('ready', this.onReady.bind(this));
-        this.on('stateChange', this.onStateChange.bind(this));
-        // this.on('objectChange', this.onObjectChange.bind(this));
-        // this.on('message', this.onMessage.bind(this));
         this.on('unload', this.onUnload.bind(this));
     }
 
-    /**
-     * Is called when databases are connected and adapter received configuration.
-     */
     async onReady() {
-        // Initialize your adapter here
+        var bc = this;
+        
+        var email = bc.config.email;
+        var password = bc.config.password;
+        var poolID = bc.config.poolID;
+        var blueConnectKey = bc.config.blueConnectKey;
+        
+        function createObj(id, name, type) {
+            bc.setObjectNotExists(id, {
+                type: 'state',
+                common: {
+                    name: name,
+                    type: type,
+                    role: 'value',
+                    read: true,
+                    write: false,
+                },
+                native: {},
+            });
+        }
+        
+        function setValue(id, value) {
+            bc.setState(id, {val: value, ack: true});
+        }
+        
+        function process(key,value, index) {
+            if(index!=='') {
+                key = index + "." + key;
+            }
+            createObj(key, key, typeof(value));
+            setValue(key, value);
+        }
 
-        // The adapters config (in the instance object everything under the attribute "native") is accessible via
-        // this.config:
-        this.log.info('config option1: ' + this.config.option1);
-        this.log.info('config option2: ' + this.config.option2);
+        function getSignatureKey(Crypto, key, dateStamp, regionName, serviceName) {
+            var kDate = Crypto.HmacSHA256(dateStamp, "AWS4" + key);
+            var kRegion = Crypto.HmacSHA256(regionName, kDate);
+            var kService = Crypto.HmacSHA256(serviceName, kRegion);
+            var kSigning = Crypto.HmacSHA256("aws4_request", kService);
+            return kSigning;
+        }
 
-        /*
-        For every state in the system there has to be also an object of type state
-        Here a simple template for a boolean variable named "testVariable"
-        Because every adapter instance uses its own unique namespace variable names can't collide with other adapters variables
-        */
-        await this.setObjectNotExistsAsync('testVariable', {
-            type: 'state',
-            common: {
-                name: 'testVariable',
-                type: 'boolean',
-                role: 'indicator',
-                read: true,
-                write: true,
+        function getAmzDate(dateStr) {
+            var chars = [":","-"];
+            for (var i=0;i<chars.length;i++) {
+                while (dateStr.indexOf(chars[i]) != -1) {
+                    dateStr = dateStr.replace(chars[i],"");
+                }
+            }
+            dateStr = dateStr.split(".")[0] + "Z";
+            return dateStr;
+        }
+
+        
+        function getMeasurements(access_key, secret_key, session_token) {
+            var myMethod = 'GET';
+            var myPath = '/prod/swimming_pool/' + poolID + '/blue/' + blueConnectKey + '/lastMeasurements';
+            var region = 'eu-west-1';
+            var myService = 'execute-api';
+            
+            var amzDate = getAmzDate(new Date().toISOString());
+            var authDate = amzDate.split("T")[0];
+            var payload = '';
+            var hashedPayload = crypto.SHA256(payload).toString();
+
+            var canonicalReq =  myMethod + '\n' +
+                                myPath + '\n' +
+                                'mode=blue_and_strip\n' +
+                                'accept-encoding:gzip;q=1.0,compress;q=0.5\n' +
+                                'accept-language:de-DE;q=1.0\n' +
+                                'host:api.riiotlabs.com\n' +
+                                'user-agent:aws-sdk-iOS/2.4.6 iOS/13.1 de_DE\n' +
+                                'x-amz-date:' + amzDate + '\n' +
+                                'x-amz-security-token:' + session_token + '\n' + 
+                                '\n' +
+                                'accept-encoding;accept-language;host;user-agent;x-amz-date;x-amz-security-token' + '\n' +
+                                hashedPayload;
+
+            var canonicalReqHash = crypto.SHA256(canonicalReq).toString();
+            var stringToSign =  'AWS4-HMAC-SHA256\n' +
+                                amzDate + '\n' +
+                                authDate+'/'+region+'/'+myService+'/aws4_request\n'+
+                                canonicalReqHash;
+
+            var signingKey = getSignatureKey(crypto, secret_key, authDate, region, myService);
+            var authKey = crypto.HmacSHA256(stringToSign, signingKey);
+
+            var authString  = 'AWS4-HMAC-SHA256 ' +
+                              'Credential='+
+                              access_key+'/'+
+                              authDate+'/'+
+                              region+'/'+
+                              myService+'/aws4_request,'+
+                              'SignedHeaders=accept-encoding;accept-language;host;user-agent;x-amz-date;x-amz-security-token '+
+                              'Signature='+authKey;
+
+            var requestOptions = {
+                'method': 'GET',
+                'uri': 'https://api.riiotlabs.com/prod/swimming_pool/' + poolID + '/blue/' + blueConnectKey + '/lastMeasurements?mode=blue_and_strip',
+                headers: {
+                    'accept-encoding': 'gzip;q=1.0,compress;q=0.5',
+                    'accept-language': 'de-DE;q=1.0',
+                    'host': 'api.riiotlabs.com',
+                    'user-agent': 'aws-sdk-iOS/2.4.6 iOS/13.1 de_DE',
+                    'x-amz-date': amzDate,
+                    'x-amz-security-token': session_token,
+                    'authorization': authString
+                }
+            };
+
+            request.get(requestOptions, function(error, response, body) {
+                var result = JSON.parse(body);
+                for(var el in result) {
+                    if(typeof(result[el])=="string") {
+                        process(el, result[el], "");
+                    }
+                }
+
+                for(var el in result["data"]) {
+                    createObj(result["data"][el]["name"], result["data"][el]["name"], "");
+                    for(var value in result["data"][el]) {
+                        if(typeof(result["data"][el][value])!=="object") {
+                            process(value, result["data"][el][value], result["data"][el]["name"]);
+                        }
+                    }
+                }
+
+            });
+        }
+        
+        request.post({
+            method: 'POST',
+            uri: 'https://api.riiotlabs.com/prod/user/login',
+            body: {'email':email,'password':password},
+            headers:{
+                'accept-language':'de-DE;q=1.0',
+                'user-agent':'Blue Connect/2.21.0 (com.riiotlabs.blue; build:190827.1727; iOS 13.1.0) Alamofire/4.8.2',
+                'accept-encoding':'gzip;q=1.0, compress;q=0.5',
+                'content-type':'application/json',
+                'accept':'*/*'
             },
-            native: {},
+            json: true
+        },  function (error, response, body) {
+            var access_key = body.credentials.access_key;
+            var secret_key = body.credentials.secret_key;
+            var session_token = body.credentials.session_token;
+            getMeasurements(access_key, secret_key, session_token);
         });
+                
+        this.subscribeStates('*');
 
-        // In order to get state updates, you need to subscribe to them. The following line adds a subscription for our variable we have created above.
-        this.subscribeStates('testVariable');
-        // You can also add a subscription for multiple states. The following line watches all states starting with "lights."
-        // this.subscribeStates('lights.*');
-        // Or, if you really must, you can also watch all states. Don't do this if you don't need to. Otherwise this will cause a lot of unnecessary load on the system:
-        // this.subscribeStates('*');
+	setTimeout(function() {bc.stop();}, 10000);
 
-        /*
-            setState examples
-            you will notice that each setState will cause the stateChange event to fire (because of above subscribeStates cmd)
-        */
-        // the variable testVariable is set to true as command (ack=false)
-        await this.setStateAsync('testVariable', true);
-
-        // same thing, but the value is flagged "ack"
-        // ack should be always set to true if the value is received from or acknowledged from the target system
-        await this.setStateAsync('testVariable', { val: true, ack: true });
-
-        // same thing, but the state is deleted after 30s (getState will return null afterwards)
-        await this.setStateAsync('testVariable', { val: true, ack: true, expire: 30 });
-
-        // examples for the checkPassword/checkGroup functions
-        let result = await this.checkPasswordAsync('admin', 'iobroker');
-        this.log.info('check user admin pw iobroker: ' + result);
-
-        result = await this.checkGroupAsync('admin', 'admin');
-        this.log.info('check group user admin group admin: ' + result);
     }
 
-    /**
-     * Is called when adapter shuts down - callback has to be called under any circumstances!
-     * @param {() => void} callback
-     */
     onUnload(callback) {
         try {
-            // Here you must clear all timeouts or intervals that may still be active
-            // clearTimeout(timeout1);
-            // clearTimeout(timeout2);
-            // ...
-            // clearInterval(interval1);
-
+            this.log.info('cleaned everything up...');
             callback();
         } catch (e) {
             callback();
         }
     }
 
-    // If you need to react to object changes, uncomment the following block and the corresponding line in the constructor.
-    // You also need to subscribe to the objects with `this.subscribeObjects`, similar to `this.subscribeStates`.
-    // /**
-    //  * Is called if a subscribed object changes
-    //  * @param {string} id
-    //  * @param {ioBroker.Object | null | undefined} obj
-    //  */
-    // onObjectChange(id, obj) {
-    //     if (obj) {
-    //         // The object was changed
-    //         this.log.info(`object ${id} changed: ${JSON.stringify(obj)}`);
-    //     } else {
-    //         // The object was deleted
-    //         this.log.info(`object ${id} deleted`);
-    //     }
-    // }
-
-    /**
-     * Is called if a subscribed state changes
-     * @param {string} id
-     * @param {ioBroker.State | null | undefined} state
-     */
-    onStateChange(id, state) {
-        if (state) {
-            // The state was changed
-            this.log.info(`state ${id} changed: ${state.val} (ack = ${state.ack})`);
-        } else {
-            // The state was deleted
-            this.log.info(`state ${id} deleted`);
-        }
-    }
-
-    // If you need to accept messages in your adapter, uncomment the following block and the corresponding line in the constructor.
-    // /**
-    //  * Some message was sent to this instance over message box. Used by email, pushover, text2speech, ...
-    //  * Using this method requires "common.message" property to be set to true in io-package.json
-    //  * @param {ioBroker.Message} obj
-    //  */
-    // onMessage(obj) {
-    //     if (typeof obj === 'object' && obj.message) {
-    //         if (obj.command === 'send') {
-    //             // e.g. send email or pushover or whatever
-    //             this.log.info('send command');
-
-    //             // Send response in callback if required
-    //             if (obj.callback) this.sendTo(obj.from, obj.command, 'Message received', obj.callback);
-    //         }
-    //     }
-    // }
-
 }
 
-// @ts-ignore parent is a valid property on module
 if (module.parent) {
-    // Export the constructor in compact mode
-    /**
-     * @param {Partial<utils.AdapterOptions>} [options={}]
-     */
-    module.exports = (options) => new Template(options);
+    module.exports = (options) => new Blueconnect(options);
 } else {
-    // otherwise start the instance directly
-    new Template();
+    new Blueconnect();
 }
