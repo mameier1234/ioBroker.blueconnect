@@ -21,13 +21,5 @@ systemDictionary = {
     'password': {
         'en': 'Password',
         'de': 'Passwort',
-    },
-    'poolID': {
-        'en': 'Pool ID',
-        'de': 'Pool ID',
-    },
-    'blueConnectKey': {
-        'en': 'BlueConnect Key',
-        'de': 'BlueConnect Key',
     }
 };
