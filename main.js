@@ -294,8 +294,18 @@ class Blueconnect extends utils.Adapter {
                         if(typeof(result["data"][el][value])!=="object") {                        
 			    if(value=="blue_device_serial") {
                                 getMeasurements(access_key, secret_key, session_token, poolID, result["data"][el][value]);
+			    } else {
+				//process(value, result["data"][el][value], result["data"][el]["name"], poolID);
 			    }
-                        }
+			    
+      		        } else {
+			    for(var valueBelow in result["data"][el][value]) {
+				if(typeof(result["data"][el][value][valueBelow])!=="object") { 
+					//bc.log.debug(valueBelow + ": " + result["data"][el][value][valueBelow]);
+					process(valueBelow, result["data"][el][value][valueBelow], "", poolID);	
+				}    	
+			    }
+		        }
                     }
                 }
 
