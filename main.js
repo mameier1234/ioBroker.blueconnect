@@ -139,7 +139,7 @@ class Blueconnect extends utils.Adapter {
                 }
 
                 for(var el in result["data"]) {
-                    createObj(result["data"][el]["name"], result["data"][el]["name"], "");
+                    createObj(poolID + "." + result["data"][el]["name"], result["data"][el]["name"], "");
                     for(var value in result["data"][el]) {
                         if(typeof(result["data"][el][value])!=="object") {
                             process(value, result["data"][el][value], result["data"][el]["name"], poolID);
