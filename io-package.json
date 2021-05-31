@@ -40,17 +40,6 @@
         "compact": true,
         "materialize": true,
         "materializeTab": true,
-        /*
-	    "adminTab": {
-            "singleton": true,
-            "name": {
-	            "en": "ioBroker Blue Connect Adapter",
-        	    "de": "ioBroker Blue Connect Adapter"
-            },
-            "link": "",
-            "fa-icon": "aws"
-        },
-	*/    
         "supportCustoms": true,
         "dependencies": [
             {
