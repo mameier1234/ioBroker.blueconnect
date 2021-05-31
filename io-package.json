@@ -40,7 +40,7 @@
         "compact": true,
         "materialize": true,
         "materializeTab": true,
-        <!--
+        /*
 	    "adminTab": {
             "singleton": true,
             "name": {
@@ -50,7 +50,7 @@
             "link": "",
             "fa-icon": "aws"
         },
-	-->,    
+	*/    
         "supportCustoms": true,
         "dependencies": [
             {
