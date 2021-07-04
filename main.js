@@ -135,7 +135,8 @@ class Blueconnect extends utils.Adapter {
 
             request.get(requestOptions, function(error, response, body) {
                 var result = JSON.parse(body);
-                //bc.log.debug(body);
+		bc.log.debug("getMeasurements():");
+                bc.log.debug(body);
 
                 for(var el in result) {
                     if(typeof(result[el])=="string") {
@@ -148,6 +149,7 @@ class Blueconnect extends utils.Adapter {
                     for(var value in result["data"][el]) {
                         if(typeof(result["data"][el][value])!=="object") {
                             process(value, result["data"][el][value], result["data"][el]["name"], poolID);
+			    bc.log.debug(value + " : " + result["data"][el][value]);
                         }
                     }
                 }
