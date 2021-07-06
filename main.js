@@ -38,6 +38,8 @@ class Blueconnect extends utils.Adapter {
                 native: {},
             });
         }
+
+
         
         function setValue(id, value) {
             bc.setState(id, {val: value, ack: true});
@@ -135,19 +137,22 @@ class Blueconnect extends utils.Adapter {
 
             request.get(requestOptions, function(error, response, body) {
                 var result = JSON.parse(body);
+		//bc.log.debug("getMeasurements():");
                 //bc.log.debug(body);
 
                 for(var el in result) {
                     if(typeof(result[el])=="string") {
                         process(el, result[el], "", poolID);
+			//bc.log.debug(el+ " : " + result[el]);
                     }
                 }
 
                 for(var el in result["data"]) {
-                    createObj(poolID + "." + result["data"][el]["name"], result["data"][el]["name"], "");
+                    //createObj(poolID + "." + result["data"][el]["name"], result["data"][el]["name"], "");
                     for(var value in result["data"][el]) {
                         if(typeof(result["data"][el][value])!=="object") {
                             process(value, result["data"][el][value], result["data"][el]["name"], poolID);
+			    //bc.log.debug(value + " : " + result["data"][el][value]);
                         }
                     }
                 }
@@ -167,7 +172,7 @@ class Blueconnect extends utils.Adapter {
             var payload = '';
             var hashedPayload = crypto.SHA256(payload).toString();
 
-	    
+	    var hasIssues = false;
 
             var canonicalReq =  myMethod + '\n' +
                                 myPath + '\n' +
@@ -225,19 +230,32 @@ class Blueconnect extends utils.Adapter {
                         //process(el, result["guidance"][el], "", poolID);
 			createObj(poolID + ".guidance." + el, el, typeof(result["guidance"][el]));
 			process(poolID + ".guidance." + el, result["guidance"][el],"", "");
-                    }
+                    } else {
+			if(el=="issue_to_fix") {
+				for(var issue in result["guidance"][el]) {
+		                    if(typeof(result["guidance"][el][issue])=="string") {
+				    	//bc.log.debug(issue + ' : ' + result["guidance"][el][issue]);
+			            	createObj(poolID + ".guidance.issue." + issue, issue, typeof(result["guidance"][el][issue]));
+			            	process(poolID + ".guidance.issue." + issue, result["guidance"][el][issue],"", "");
+					hasIssues = true;
+			            }
+  				}
+			} else {
+				bc.log.debug("Node ignored: " + el);
+			}
+		    }
                 }
 
-/*
-                for(var el in result["guidance"]) {
-                    createObj(poolID + "." + result["guidance"][el]["name"], result["guidance"][el]["name"], "");
-                    for(var value in result["guidance"][el]) {
-                        if(typeof(result["guidance"][el][value])!=="object") {
-                            process(value, result["guidance"][el][value], result["guidance"][el]["name"], poolID);
-                        }
-                    }
-                }
-*/
+	    if(!hasIssues) {
+		bc.log.debug("clearing issue for Pool " + poolID);
+		process(poolID + ".guidance.issue.action_title", "", "", "");
+		process(poolID + ".guidance.issue.chemicalPackId", "", "", "");
+		process(poolID + ".guidance.issue.issue_title", "", "", "");
+		process(poolID + ".guidance.issue.task_identifier", "", "", "");
+		process(poolID + ".guidance.issue.user_action", "", "", "");
+	    }
+
+
             });
         }
 
