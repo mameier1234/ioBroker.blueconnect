@@ -1,9 +1,11 @@
 
 'use strict';
 
+
 const utils = require('@iobroker/adapter-core');
 const request = require("request");
 const crypto = require('crypto-js');
+const fs = require('fs');
 
 
 class Blueconnect extends utils.Adapter {
@@ -123,6 +125,7 @@ class Blueconnect extends utils.Adapter {
 
             var requestOptions = {
                 'method': 'GET',
+		'gzip': true,
 		'uri': 'https://api.riiotlabs.com/prod/swimming_pool/' + poolID + '/blue/' + blueConnectKey + '/lastMeasurements?mode=blue_and_strip',
                 headers: {
                     'accept-encoding': 'gzip;q=1.0,compress;q=0.5',
@@ -164,7 +167,7 @@ class Blueconnect extends utils.Adapter {
             var myMethod = 'GET';
             var myPath = '/prod/swimming_pool/' + poolID + '/guidance';
             
-	    var region = 'eu-west-1';
+			var region = 'eu-west-1';
             var myService = 'execute-api';
             
             var amzDate = getAmzDate(new Date().toISOString());
@@ -172,7 +175,10 @@ class Blueconnect extends utils.Adapter {
             var payload = '';
             var hashedPayload = crypto.SHA256(payload).toString();
 
-	    var hasIssues = false;
+			var hasIssues = false;
+			var hasExpiration = false;
+			var hasStarted = false;
+			
 
             var canonicalReq =  myMethod + '\n' +
                                 myPath + '\n' +
@@ -208,7 +214,8 @@ class Blueconnect extends utils.Adapter {
 
             var requestOptions = {
                 'method': 'GET',
-				'uri': 'https://api.riiotlabs.com/prod/swimming_pool/' + poolID + '/guidance?lang=' + language + '&mode=interactive_v03',
+		'gzip': true,
+		'uri': 'https://api.riiotlabs.com/prod/swimming_pool/' + poolID + '/guidance?lang=' + language + '&mode=interactive_v03',
                 headers: {
                     'accept-encoding': 'gzip;q=1.0,compress;q=0.5',
                     'accept-language': 'de-DE;q=1.0',
@@ -226,34 +233,47 @@ class Blueconnect extends utils.Adapter {
 
                 for(var el in result["guidance"]) {
                     if(typeof(result["guidance"][el])=="string") {
-			//bc.log.debug(el + ' : ' + result["guidance"][el]);
+						//bc.log.debug(el + ' : ' + result["guidance"][el]);
                         //process(el, result["guidance"][el], "", poolID);
-			createObj(poolID + ".guidance." + el, el, typeof(result["guidance"][el]));
-			process(poolID + ".guidance." + el, result["guidance"][el],"", "");
+						createObj(poolID + ".guidance." + el, el, typeof(result["guidance"][el]));
+						process(poolID + ".guidance." + el, result["guidance"][el],"", "");
+						if(el=="expiration_time") hasExpiration = true;
+						if(el=="start_date") hasStarted = true;
                     } else {
-			if(el=="issue_to_fix") {
-				for(var issue in result["guidance"][el]) {
-		                    if(typeof(result["guidance"][el][issue])=="string") {
-				    	//bc.log.debug(issue + ' : ' + result["guidance"][el][issue]);
-			            	createObj(poolID + ".guidance.issue." + issue, issue, typeof(result["guidance"][el][issue]));
-			            	process(poolID + ".guidance.issue." + issue, result["guidance"][el][issue],"", "");
-					hasIssues = true;
-			            }
-  				}
-			} else {
-				bc.log.debug("Node ignored: " + el);
-			}
-		    }
+						if(el=="issue_to_fix") {
+							for(var issue in result["guidance"][el]) {
+								if(typeof(result["guidance"][el][issue])=="string") {
+									//bc.log.debug(issue + ' : ' + result["guidance"][el][issue]);
+									createObj(poolID + ".guidance.issue." + issue, issue, typeof(result["guidance"][el][issue]));
+									process(poolID + ".guidance.issue." + issue, result["guidance"][el][issue],"", "");
+									hasIssues = true;
+								}
+							}
+						} else {
+							bc.log.debug("Node ignored: " + el);
+						}
+					}
                 }
 
 	    if(!hasIssues) {
-		bc.log.debug("clearing issue for Pool " + poolID);
-		process(poolID + ".guidance.issue.action_title", "", "", "");
-		process(poolID + ".guidance.issue.chemicalPackId", "", "", "");
-		process(poolID + ".guidance.issue.issue_title", "", "", "");
-		process(poolID + ".guidance.issue.task_identifier", "", "", "");
-		process(poolID + ".guidance.issue.user_action", "", "", "");
+			//bc.log.debug("clearing issue for Pool " + poolID);
+			process(poolID + ".guidance.issue.action_title", "", "", "");
+			process(poolID + ".guidance.issue.chemicalPackId", "", "", "");
+			process(poolID + ".guidance.issue.issue_title", "", "", "");
+			process(poolID + ".guidance.issue.task_identifier", "", "", "");
+			process(poolID + ".guidance.issue.user_action", "", "", "");
 	    }
+		
+		if(!hasExpiration) {
+			//bc.log.debug("clearing expiration for Pool " + poolID);
+			process(poolID + ".guidance.expiration_time", "", "", "");
+		}
+		
+		if(!hasStarted) {
+			//bc.log.debug("clearing issue start date for Pool " + poolID);
+			process(poolID + ".guidance.start_date", "", "", "");
+		}
+
 
 
             });
@@ -307,7 +327,8 @@ class Blueconnect extends utils.Adapter {
 
             var requestOptions = {
                 'method': 'GET',
-				'uri': 'https://api.riiotlabs.com/prod/swimming_pool/' + poolID + '/feed?lang=' + language,
+		'gzip': true,
+		'uri': 'https://api.riiotlabs.com/prod/swimming_pool/' + poolID + '/feed?lang=' + language,
                 headers: {
                     'accept-encoding': 'gzip;q=1.0,compress;q=0.5',
                     'accept-language': 'de-DE;q=1.0',
@@ -380,6 +401,7 @@ class Blueconnect extends utils.Adapter {
             var requestOptions = {
                 'method': 'GET',
                 'uri': 'https://api.riiotlabs.com/prod/swimming_pool?deleted=false',
+		'gzip': true,
                 headers: {
                     'accept-encoding': 'gzip;q=1.0,compress;q=0.5',
                     'accept-language': 'de-DE;q=1.0',
@@ -456,6 +478,7 @@ class Blueconnect extends utils.Adapter {
 
             var requestOptions = {
                 'method': 'GET',
+		'gzip': true,
                 'uri': 'https://api.riiotlabs.com/prod/swimming_pool/' + poolID + '/blue?deleted=false',
                 headers: {
                     'accept-encoding': 'gzip;q=1.0,compress;q=0.5',
@@ -514,6 +537,8 @@ class Blueconnect extends utils.Adapter {
             method: 'POST',
             uri: 'https://api.riiotlabs.com/prod/user/login',
             body: {'email':email,'password':password},
+	    //encoding: null,
+	    gzip: true,
             headers:{
                 'accept-language':'de-DE;q=1.0',
                 'user-agent':'Blue Connect/2.21.0 (com.riiotlabs.blue; build:190827.1727; iOS 13.1.0) Alamofire/4.8.2',
@@ -523,10 +548,20 @@ class Blueconnect extends utils.Adapter {
             },
             json: true
         },  function (error, response, body) {
-            var access_key = body.credentials.access_key;
-            var secret_key = body.credentials.secret_key;
-            var session_token = body.credentials.session_token;
-	    getPool(access_key, secret_key, session_token);
+            //bc.log.debug("Encoding: " + response.headers['content-encoding']);
+	    
+	    try {
+
+            	var access_key = body.credentials.access_key;
+		//bc.log.debug("Access Key: " + access_key);
+            	var secret_key = body.credentials.secret_key;
+		//bc.log.debug("Secret Key: " + secret_key);
+            	var session_token = body.credentials.session_token;
+		//bc.log.debug("Token: " + session_token);
+	    	getPool(access_key, secret_key, session_token);
+	   } catch (e) {
+		bc.log.debug("Error getting credentials!");
+	   };
         });
                 
         this.subscribeStates('*');
