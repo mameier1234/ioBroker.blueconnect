@@ -1,11 +1,15 @@
 {
     "common": {
         "name": "blueconnect",
-        "version": "0.0.1",
+        "version": "0.0.5",
         "news": {
             "0.0.1": {
                 "en": "initial release",
                 "de": "Erstveröffentlichung"
+            },
+	    "0.0.5": {
+                "en": "bugfix release",
+                "de": "Fehlerbehebungen"
             }
         },
         "title": "Blue Connect - Pool Care",
