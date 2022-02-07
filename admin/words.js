@@ -14,12 +14,28 @@ systemDictionary = {
         'pl': 'Ustawienia adaptera dla template',
         'zh-cn': 'template的适配器设置'
     },
-    'email': {
-        'en': 'eMail-Adress',
-        'de': 'eMail-Adresse',
-    },
-    'password': {
-        'en': 'Password',
-        'de': 'Passwort',
-    }
+      "email": {
+        "en": "email",
+        "de": "Email",
+        "ru": "электронное письмо",
+        "pt": "o email",
+        "nl": "e-mail",
+        "fr": "e-mail",
+        "it": "e-mail",
+        "es": "Email",
+        "pl": "e-mail",
+        "zh-cn": "电子邮件"
+      },
+    "password": {
+        "en": "password",
+        "de": "Passwort",
+        "ru": "пароль",
+        "pt": "senha",
+        "nl": "wachtwoord",
+        "fr": "le mot de passe",
+        "it": "parola d'ordine",
+        "es": "contraseña",
+        "pl": "hasło",
+        "zh-cn": "密码"
+  }
 };
