@@ -2,6 +2,8 @@
     "common": {
         "name": "blueconnect",
         "version": "0.0.5",
+	"connectionType": "cloud",
+	"dataSource": "poll",
         "news": {
             "0.0.1": {
                 "en": "initial release",
@@ -35,8 +37,8 @@
         "main": "main.js",
         "icon": "blueconnect.png",
         "enabled": true,
-        "extIcon": "blueconnect.png",
-        "readme": "https://github.com/Author/ioBroker.template/blob/master/README.md",
+        "extIcon": "https://github.com/mameier1234/ioBroker.blueconnect/blob/master/admin/blueconnect.png",
+        "readme": "https://github.com/mameier1234/ioBroker.blueconnect/blob/master/README.md",
         "loglevel": "info",
         "mode": "schedule",
         "schedule": "*/1 * * * *",
