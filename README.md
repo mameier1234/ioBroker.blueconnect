@@ -28,10 +28,16 @@ Then set a schedule for the adapter to fetch data from Blueriiot's service.
 ### 0.0.1
 * (Author) initial release
 
+### 0.0.5
+* (kopierschnitte) minor code fixes
+
+### 0.0.6
+* (kopierschnitte) prepare for JS-Controller 6.x
+
 ## License
 MIT License
 
-Copyright (c) 2019 Author <author@mail.com>
+Copyright (c) 2022 Malte Bacher malte@bacher-de.com
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

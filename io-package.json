@@ -1,11 +1,21 @@
 {
     "common": {
         "name": "blueconnect",
-        "version": "0.0.1",
+        "version": "0.0.6",
+	"connectionType": "cloud",
+	"dataSource": "poll",
         "news": {
             "0.0.1": {
                 "en": "initial release",
                 "de": "Erstveröffentlichung"
+            },
+	        "0.0.5": {
+                "en": "bugfix release",
+                "de": "Fehlerbehebungen"
+            },
+            "0.0.6": {
+                "en": "prepare for JS-Controller 6",
+                "de": "Vorbereitungen für JS-Controller 6"
             }
         },
         "title": "Blue Connect - Pool Care",
@@ -31,8 +41,8 @@
         "main": "main.js",
         "icon": "blueconnect.png",
         "enabled": true,
-        "extIcon": "blueconnect.png",
-        "readme": "https://github.com/Author/ioBroker.template/blob/master/README.md",
+        "extIcon": "https://github.com/mameier1234/ioBroker.blueconnect/blob/master/admin/blueconnect.png",
+        "readme": "https://github.com/mameier1234/ioBroker.blueconnect/blob/master/README.md",
         "loglevel": "info",
         "mode": "schedule",
         "schedule": "*/1 * * * *",
