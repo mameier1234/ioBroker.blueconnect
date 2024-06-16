@@ -31,6 +31,9 @@ Then set a schedule for the adapter to fetch data from Blueriiot's service.
 ### 0.0.5
 * (kopierschnitte) minor code fixes
 
+### 0.0.6
+* (kopierschnitte) prepare for JS-Controller 6.x
+
 ## License
 MIT License
 

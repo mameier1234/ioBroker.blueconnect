@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "blueconnect",
-        "version": "0.0.5",
+        "version": "0.0.6",
 	"connectionType": "cloud",
 	"dataSource": "poll",
         "news": {
@@ -9,9 +9,13 @@
                 "en": "initial release",
                 "de": "Erstveröffentlichung"
             },
-	    "0.0.5": {
+	        "0.0.5": {
                 "en": "bugfix release",
                 "de": "Fehlerbehebungen"
+            },
+            "0.0.6": {
+                "en": "prepare for JS-Controller 6",
+                "de": "Vorbereitungen für JS-Controller 6"
             }
         },
         "title": "Blue Connect - Pool Care",
